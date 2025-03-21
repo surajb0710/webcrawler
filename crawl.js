@@ -1,3 +1,5 @@
+const { JSDOM } = require('jsdom');
+
 const normaliseUrl = (url) => {
   const urlObj = new URL(url);
 
@@ -8,10 +10,34 @@ const normaliseUrl = (url) => {
   }
 
   return hostPath;
-
-  //   console.log('HostPath', hostPath.slice(-1));
 };
 
-// normaliseUrl('https://pomofocus.io/path/');
+const getURLsFromHTML = (htmlBody, baseUrl) => {
+  const urls = [];
+  const dom = new JSDOM(htmlBody);
+  const linkElements = dom.window.document.querySelectorAll('a');
 
-module.exports = { normaliseUrl };
+  for (const linkElement of linkElements) {
+    if (linkElement.href.slice(0, 1) === '/') {
+      //relative
+      try {
+        const urlObj = new URL(`${baseUrl}${linkElement.href}`);
+        urls.push(urlObj.href);
+      } catch (error) {
+        console.log('Error with relative url is :', error.message);
+      }
+    } else {
+      //absolute
+      try {
+        const urlObj = new URL(linkElement.href);
+        urls.push(urlObj.href);
+      } catch (error) {
+        console.log('Error with absolute url is :', error.message);
+      }
+    }
+  }
+
+  return urls;
+};
+
+module.exports = { normaliseUrl, getURLsFromHTML };
