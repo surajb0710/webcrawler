@@ -1,4 +1,5 @@
 const { crawlPage } = require('./crawl');
+const { crawlProductPage } = require('./crawlP');
 const { printReport } = require('./report');
 
 const main = async () => {
@@ -11,11 +12,10 @@ const main = async () => {
   } else {
     const baseUrl = process.argv[2];
     console.log('Starting crawl of :', baseUrl);
-    const pages = await crawlPage(baseUrl, baseUrl, {});
-    printReport(pages);
+    // const pages = await crawlPage(baseUrl, baseUrl, {});
+    // printReport(pages);
+    await crawlProductPage(baseUrl);
   }
 };
 
 main();
-
-// https:wagslane.dev
